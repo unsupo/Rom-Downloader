@@ -39,6 +39,14 @@ except ImportError:
     importModule('bs4')
     from bs4 import BeautifulSoup
 
+LOG_FORMAT = '%(asctime)s %(name)-9s %(levelname)-8s %(message)s'
+LOGFILE = "rom-downloader.log"
+logging.basicConfig(level=logging.INFO,
+                    format=LOG_FORMAT,
+                    datefmt='%Y-%m-%d %H:%M:%S',
+                    filename=LOGFILE,
+                    filemode='a')
+LOGGER = logging.getLogger('rom-downloader')
 
 def getWebContent(url):
     req=urllib2.Request(url)
@@ -200,7 +208,7 @@ def downloadAllRoms():
                         shutil.copyfileobj(r.raw, f)
                     finished=True
                 except Exception as ee:
-                    logging.exception("Problem with download")
+                    LOGGER.exception("Problem with download")
                     shutil.rmtree(path,ignore_errors=True)
                     raise ee
                 # print "File doesn't end in .zip or *.7z*: "+r.headers['filename']
@@ -214,7 +222,7 @@ def downloadAllRoms():
                 shutil.rmtree(path, ignore_errors=True)
             raise e
         except Exception as e:
-            logging.exception("Failed: "+path)
+            LOGGER.exception("Failed: "+path)
             print "FAILED: "+path
             print "\t"+traceback.format_exc()
             time.sleep(5)
