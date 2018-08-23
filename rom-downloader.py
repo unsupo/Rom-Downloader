@@ -11,6 +11,9 @@ import time
 
 import sys
 
+import logging
+
+
 def importModule(m):
     if os.system('pip -V') == 1:
         os.system("curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py")
@@ -197,6 +200,7 @@ def downloadAllRoms():
                         shutil.copyfileobj(r.raw, f)
                     finished=True
                 except Exception as ee:
+                    logging.exception("Problem with download")
                     shutil.rmtree(path,ignore_errors=True)
                     raise ee
                 # print "File doesn't end in .zip or *.7z*: "+r.headers['filename']
@@ -210,6 +214,7 @@ def downloadAllRoms():
                 shutil.rmtree(path, ignore_errors=True)
             raise e
         except Exception as e:
+            logging.exception("Failed: "+path)
             print "FAILED: "+path
             print "\t"+traceback.format_exc()
             time.sleep(5)
