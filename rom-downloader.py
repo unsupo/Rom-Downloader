@@ -151,7 +151,7 @@ def downloadAllRoms():
         os.makedirs(dir)
     for i in allGames:
         v=i.split(',')
-        path=dir+"/"+v[0]+"/"+v[1].replace(' ','_').replace(':',"")
+        path=dir+"/"+v[0]+"/"+v[1].replace(' ','_').replace(':',"").replace('?',"").replace('*',"")
         if os.path.exists(path):
             continue
         id=v[-1].split('id=')[-1]
