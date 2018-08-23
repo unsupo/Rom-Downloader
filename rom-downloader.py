@@ -7,12 +7,34 @@ import uuid
 import zipfile
 
 import StringIO
-import requests
 import time
 
 import sys
-import pylzma
-from bs4 import BeautifulSoup
+
+def importModule(m):
+    if os.system('pip -V') == 1:
+        os.system("curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py")
+        os.system("python get-pip.py")
+    # if m is 'pylzma':
+        # TODO https://download.microsoft.com/download/7/9/6/796EF2E4-801B-4FC4-AB28-B59FBF6D907B/VCForPython27.msi
+        # pass
+    os.system("pip install "+m)
+
+try:
+    import pylzma
+except ImportError:
+    importModule('pylzma')
+    import pylzma
+try:
+    import requests
+except ImportError:
+    importModule('requests')
+    import requests
+try:
+    from bs4 import BeautifulSoup
+except ImportError:
+    importModule('bs4')
+    from bs4 import BeautifulSoup
 
 
 def getWebContent(url):
@@ -152,11 +174,11 @@ def downloadAllRoms():
             payload[p['name']]=p['value']
         cookies=s.cookies.get_dict()
         headers = getHeaders(ref)
-        # print '-Downloading: '+path
+        print '-Downloading: '+path
         r = requests.get(base+"?id="+id, stream=True, headers=headers, data=payload,cookies=cookies)
         finished=False
         try:
-            # print '--Extracting: '+path
+            print '--Extracting: '+path
             filename=r.headers['Content-Disposition'].split('filename=')[-1].replace('"',"")
             if filename.endswith(".zip"):
                 z = zipfile.ZipFile(StringIO.StringIO(r.content))
@@ -190,6 +212,7 @@ def downloadAllRoms():
         except Exception as e:
             print "FAILED: "+path
             print "\t"+traceback.format_exc()
+            time.sleep(5)
 
 
 if __name__ == '__main__':
